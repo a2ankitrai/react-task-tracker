@@ -1,29 +1,42 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddTask from "./components/AddTask";
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
 
 function App() {
+  const [showAddTask, setShowAddTask] = useState(false);
+
   const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      text: "Plan vacation days",
-      day: "14 Oct 2022",
-      reminder: true
-    },
-    {
-      id: 2,
-      text: "Complete ds problems",
-      day: "15 Jul 2023",
-      reminder: true
-    },
-    {
-      id: 3,
-      text: "Increase insurance coverage",
-      day: "01 Nov 2022",
-      reminder: false
-    }
+    // {
+    //   id: 1,
+    //   text: "Plan vacation days",
+    //   day: "14 Oct 2022",
+    //   reminder: true
+    // },
+    // {
+    //   id: 2,
+    //   text: "Complete ds problems",
+    //   day: "15 Jul 2023",
+    //   reminder: true
+    // },
+    // {
+    //   id: 3,
+    //   text: "Increase insurance coverage",
+    //   day: "01 Nov 2022",
+    //   reminder: false
+    // }
   ]);
+
+  const fetchTasks = async () => {
+    const res = await fetch("http://localhost:5000/tasks");
+    const data = await res.json();
+
+    return data;
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
   // Add task
   const addTask = (task) => {
@@ -54,8 +67,8 @@ function App() {
   // const name = 'Ankit';
   return (
     <div className="App container">
-      <Header title="My todos.." />
-      <AddTask onAdd={addTask} />
+      <Header title="My todos.." onAdd={() => setShowAddTask(!showAddTask)} />
+      {showAddTask && <AddTask onAdd={addTask} />}
       {tasks.length > 0 ? (
         <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder} />
       ) : (
